@@ -9,7 +9,7 @@ const AddressForm = () => {
     return (
         <React.Fragment>
         <Typography variant="h6" gutterBottom>
-          Shipping address
+          Fill Information
         </Typography>
         <Grid container spacing={3}>
           <Grid item lg={12}>

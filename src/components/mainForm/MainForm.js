@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
@@ -28,14 +28,67 @@ const InfoForm = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const [timer, setTimer] = React.useState(0);
-
-const handleNext = (question, answer) => {
-   setActiveStep(activeStep + 1);
-};
+  const [timerStartes, setTimerStartes] = React.useState();
+  const [pollingFinished, setPollingFinished] = React.useState();
 
 
+  useEffect(()=>{
 
-const handleBack = () => {
+    if (localStorage.getItem("pollingFinished")  === "true")
+      setPollingFinished(true);
+  
+  
+  } , [])
+
+  useEffect(()=>{
+
+    if (activeStep === 1 )
+    setTimerStartes(true)
+     
+    
+  
+  
+  } , [activeStep])
+
+ const chageTime = () =>{
+ 
+ }
+
+  useEffect(()=>{
+
+    if (timerStartes){
+      const a = setTimeout(() => {
+        setTimer(timer + 1);
+      }, 1000);
+      return () => {
+        clearTimeout(a);
+      };
+    }
+ 
+
+  
+  } , [timerStartes])
+
+  useEffect(()=>{
+
+    if (timerStartes)
+    chageTime() ; 
+  
+  } , [timer])
+
+ 
+
+  const countDown = ()=>{
+    var countDownDate = new Date("Jan 5, 2022 15:37:25").getTime();
+  }
+
+  const handleNext = (question, answer) => {
+    setActiveStep(activeStep + 1);
+  };
+
+
+
+  const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
 
@@ -44,24 +97,24 @@ const handleBack = () => {
     switch (step) {
       case 0:
         return <AddressForm />;
-       case 1:
-         return <FirstQuestion/>;
+      case 1:
+        return <FirstQuestion />;
 
-         case 2:
-          return <SecondQuestion />;
-          
-          case 3:
-         return <ThirdQuestion />;
+      case 2:
+        return <SecondQuestion />;
 
-         case 4:
-         return <Reveiw />;
-    //   case 2:
-    //     return <Review />;
+      case 3:
+        return <ThirdQuestion />;
+
+      case 4:
+        return <Reveiw />;
+      //   case 2:
+      //     return <Review />;
       default:
         throw new Error('Unknown step');
     }
   }
-    
+
 
 
 
@@ -70,53 +123,61 @@ const handleBack = () => {
       <CssBaseline />
 
       <main className={classes.layout}>
-      <TimerContext.Provider value={{
-        timer : timer , setTimer 
-      }}>
-        <Paper className={classes.paper}>
-          <Typography component="h1" variant="h4" align="center">
-            Checkout
-          </Typography>
-          <Stepper activeStep={activeStep} className={classes.stepper}>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-          <React.Fragment>
-            {activeStep === steps.length ? (
-              <React.Fragment>
-                <Typography variant="h5" gutterBottom>
-                  Thank you for your order.
-                </Typography>
-                <Typography variant="subtitle1">
-                  Your order number is #2001539. We have emailed your order confirmation, and will
-                  send you an update when your order has shipped.
-                </Typography>
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                {getStepContent(activeStep)}
-                <div className={classes.buttons}>
-                  {activeStep !== 0 && (
-                    <Button onClick={handleBack} className={classes.button}>
-                      Back
+        <TimerContext.Provider value={{
+          timer: timer, setTimer
+        }}>
+          <Paper className={classes.paper}>
+            <Typography component="h1" variant="h4" align="center">
+              Polling {timer}
+            </Typography>
+
+            {pollingFinished && <Typography component="h1" variant="h4" align="center">
+              Thanks to You Polling 
+            </Typography>}
+            {!pollingFinished && 
+            <>
+            <Stepper activeStep={activeStep} className={classes.stepper}>
+              {steps.map((label) => (
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+            <React.Fragment>
+              {activeStep === steps.length ? (
+                <React.Fragment>
+                  <Typography variant="h5" gutterBottom>
+                    Thank you for your order.
+                  </Typography>
+                  <Typography variant="subtitle1">
+                    Your order number is #2001539. We have emailed your order confirmation, and will
+                    send you an update when your order has shipped.
+                  </Typography>
+                </React.Fragment>
+              ) : (
+                <React.Fragment>
+                  {getStepContent(activeStep)}
+                  <div className={classes.buttons}>
+                    {activeStep !== 0 && (
+                      <Button onClick={handleBack} className={classes.button}>
+                        Back
+                      </Button>
+                    )}
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleNext}
+                      className={classes.button}
+                    >
+                      {activeStep === 0 ? 'Start  ... ' : activeStep === steps.length - 1 ? 'Place order' : 'Next'}
                     </Button>
-                  )}
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleNext}
-                    className={classes.button}
-                  >
-                    {activeStep ===  0 ? 'Start' :  activeStep === steps.length - 1 ? 'Place order' : 'Next'}
-                  </Button>
-                </div>
-              </React.Fragment>
-            )}
-          </React.Fragment>
-        </Paper>
+                  </div>
+                </React.Fragment>
+              )}
+            </React.Fragment>
+            </>          
+            }
+          </Paper>
         </TimerContext.Provider>
       </main>
     </React.Fragment>
